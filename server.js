@@ -67,10 +67,10 @@ app.get('/user-uploads/:file', function(req, res){
     }else{
         res.status(404).send('No File Found!');
     }
-    
+
 });
 
-// JWT Middelware 
+// JWT Middelware
 app.use(async (req, res, next) => {
 
   const token = req.cookies.token ? req.cookies.token : null;
@@ -125,11 +125,11 @@ app.get(['*/:param', '*'], (req, res) => {
         }),
         cache: new InMemoryCache(),
       });
-    
+
       const context = {
         URL_Param
       };
-    
+
       // The client-side App will instead use <BrowserRouter>
       const App = (
         <ApolloProvider client={client}>
@@ -144,10 +144,10 @@ app.get(['*/:param', '*'], (req, res) => {
 
         const content = ReactDOM.renderToString(App);
         const helmet = Helmet.renderStatic();
-        
+
         const initialState = client.extract();
         const html = <HTML content={content} state={initialState} helmet={helmet} />;
-      
+
         res.status(200);
         res.send(`<!doctype html>\n${ReactDOM.renderToStaticMarkup(html)}`);
         res.end();
@@ -159,7 +159,8 @@ app.get(['*/:param', '*'], (req, res) => {
 app.post('/password-reset', (req, response) => {
 
     var mailer = nodemailer.createTransport({
-        host: process.env.NODEMAILER_HOST,
+      // host: process.env.NODEMAILER_HOST,
+        service: process.env.NODEMAILER_SERVICE,
         auth: {
             user: process.env.NODEMAILER_AUTH_USER,
             pass: process.env.NODEMAILER_AUTH_PW
@@ -185,7 +186,7 @@ app.post('/password-reset', (req, response) => {
             // console.log(err)
             return response.status(500).send('500 - Internal Server Error')
         }
-        response.status(200).send('200 - The request has succeeded.') 
+        response.status(200).send('200 - The request has succeeded.')
     });
 
 });
@@ -202,7 +203,7 @@ const getFileType = (fileType) => {
 }
 
 app.post('/upload', function(req, res) {
-    
+
     if (!req.files) return res.status(400).send('No files were uploaded.');
 
       var current_files = fs.readdirSync('./user-uploads/profile-images/');
@@ -211,29 +212,29 @@ app.post('/upload', function(req, res) {
       let tempFileName = randomstring.generate(21) + file_ext;
 
       const fileExists = current_files.includes(tempFileName);
-    
+
       while (fileExists) {
           let string = randomstring.generate(21);
           tempFileName = string + file_ext;
-  
-          if (!current_files.includes(tempFileName)) {   
+
+          if (!current_files.includes(tempFileName)) {
               break;
-          } 
+          }
 
       }
-    
+
     let send_filePath = './user-uploads/profile-images/' + tempFileName;
-    
+
     profilePic.mv(send_filePath, function(err) {
-        
+
       if (err) return res.status(500).send(err);
-        
+
       const res_dataObj = {
           "newFileName": tempFileName
       }
 
       res.send(res_dataObj);
-      
+
     });
 
   });
