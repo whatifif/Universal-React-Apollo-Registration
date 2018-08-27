@@ -35,6 +35,9 @@ import User from './src/models/User';
 // Connect MongoDB
 mongoose.connect(process.env.DB_CONNECTION_STRING, { useNewUrlParser: true }).then(() => {
     console.log('Connection to DB successful');
+    if(process.env.DB_SEED === 'true') {
+      const seed_db = require('./seed_db')
+    }
 }).catch(err => {
     console.log(`Connection to DB Error: ${err}`);
 });
